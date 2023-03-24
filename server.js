@@ -3,6 +3,6 @@ import { connectDB } from "./data/database.js";
 
 connectDB();
 
-app.listen(8000, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Server is running on http://localhost:8000`);
 });
