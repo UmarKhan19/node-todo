@@ -1,29 +1,9 @@
 import express from "express";
-import mongoose from "mongoose";
+import userRouter from "./routes/user.js";
 
-const app = express();
+export const app = express();
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017", { dbName: "backendAPI" })
-  .then(() => {
-    console.log("connected to the database");
-  })
-  .catch((e) => {
-    console.log(e);
-  });
-
-const userSchema = mongoose.Schema({
-  name: String,
-  gender: String,
-  age: Number,
-});
-
-const User = mongoose.model("user", userSchema);
-
-app.get("/", (req, res) => {
-  res.send("helooooooooo");
-});
-
-app.listen(8000, () => {
-  console.log(`Server is running on http://localhost:8000`);
-});
+// Middlewares
+// req.body ko access krne ke liye kiya hai ye
+app.use(express.json());
+app.use(userRouter);
