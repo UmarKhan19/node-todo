@@ -1,0 +1,11 @@
+{
+  "name": "nodeapi",
+  "version": "1.0.0",
+  "description": "this is the api part of the course",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Umar Khan",
+  "license": "ISC"
+}
