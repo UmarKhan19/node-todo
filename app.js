@@ -1,7 +1,9 @@
 import express from "express";
 import userRouter from "./routes/user.js";
+import taskRouter from "./routes/task.js";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./middlewares/error.js";
 
 export const app = express();
 
@@ -13,4 +15,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Using routes
-app.use(userRouter);
+app.use("/api/v1/user", userRouter);
+app.use("/api/v1/task", taskRouter);
+
+// Using error handler
+app.use(errorHandler);

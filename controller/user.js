@@ -1,119 +1,120 @@
 import { User } from "../model/user.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { sendToken } from "../utils/features.js";
 
 // *******************************
 // Get all users
 // *******************************
 export const getAllUsers = async (req, res) => {
-  const users = await User.find({});
+  try {
+    const users = await User.find({});
 
-  if (!users)
-    return res.status(404).json({ success: false, message: "No users found" });
+    if (!users) return next(new ErrorHandler("No users found", 404));
 
-  res.status(200).json({ success: true, users });
+    res.status(200).json({ success: true, users });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // *******************************
 // Create a user
 // *******************************
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  let user = await User.findOne({ email });
+    let user = await User.findOne({ email });
 
-  if (user) {
-    return res
-      .status(400)
-      .json({ message: "User already exists with this email" });
+    if (user) {
+      return next(new ErrorHandler("User already exists", 400));
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user = await User.create({ name, email, password: hashedPassword });
+
+    sendToken(user, res, 200, "User created successfully");
+  } catch (error) {
+    next(error);
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  user = await User.create({ name, email, password: hashedPassword });
-
-  sendToken(user, res, 200, "User created successfully");
 };
 
 // *******************************
 // Login a user
 // *******************************
 export const login = async (req, res) => {
-  const { email, password } = req.body;
-  const { token } = req.cookies;
+  try {
+    const { email, password } = req.body;
+    const { token } = req.cookies;
 
-  if (token)
-    return res
-      .status(404)
-      .json({ success: false, message: "User is already logged in" });
+    if (token) return next(new ErrorHandler("User is already logged in", 400));
 
-  const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password");
 
-  if (!user) {
-    return res
-      .status(404)
-      .json({ message: "User does not exist with this email" });
+    if (!user) {
+      return next(new ErrorHandler("User already exist with this email", 404));
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch)
+      return next(new ErrorHandler("Incorrect email or password", 400));
+
+    sendToken(user, res, 200, "User logged in successfully");
+  } catch (error) {
+    next(error);
   }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-
-  if (!isMatch)
-    return res
-      .status(400)
-      .json({ success: false, message: "Incorrect email or password" });
-
-  sendToken(user, res, 200, "User logged in successfully");
 };
 
 // *******************************
 // Logout user
 // *******************************
 export const logout = async (req, res) => {
-  res
-    .status(200)
-    .clearCookie("token")
-    .json({ success: true, message: "User logged out Successfully" });
+  try {
+    res
+      .status(200)
+      .clearCookie("token")
+      .json({ success: true, message: "User logged out Successfully" });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // *******************************
 // Get User's Own Profile
 // *******************************
 export const getMyProfile = async (req, res) => {
-  const user = await User.findById(req.user.id);
+  try {
+    const user = await User.findById(req.user.id);
 
-  res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // *******************************
 // Get single user
 // *******************************
 export const getSingleUser = async (req, res) => {
-  const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-  const user = await User.findById(id);
+    const user = await User.findById(id);
 
-  if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
+    if (!user) return next(new ErrorHandler("User not found", 404));
 
-  res.status(200).json({ success: true, user });
+    res.status(200).json({ success: true, user });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // *******************************
 // Update user
 // *******************************
-export const updateUser = async (req, res) => {
-  const { id } = req.params;
-
-  const { name, email, password } = req.body;
-
-  let user = await User.findById(id);
-
-  if (!user)
-    return res.status(404).json({ success: false, message: "User not found" });
-
-  user = await User.findByIdAndUpdate(id, { name, email, password });
-};
+export const updateUser = async (req, res) => {};
 
 // *******************************
 // Delete user
