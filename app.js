@@ -4,6 +4,7 @@ import taskRouter from "./routes/task.js";
 import { config } from "dotenv";
 import cookieParser from "cookie-parser";
 import { errorHandler } from "./middlewares/error.js";
+import cors from "cors";
 
 export const app = express();
 
@@ -13,6 +14,13 @@ config({ path: "./data/config.env" });
 // req.body ko access krne ke liye kiya hai ye
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+  cors({
+    origin: [process.env.FRONTEND_URL],
+    methods: ["GET", "PUT", "POST", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Using routes
 app.use("/api/v1/user", userRouter);

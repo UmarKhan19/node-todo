@@ -5,7 +5,7 @@ import { sendToken } from "../utils/features.js";
 // *******************************
 // Get all users
 // *******************************
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({});
 
@@ -20,7 +20,7 @@ export const getAllUsers = async (req, res) => {
 // *******************************
 // Create a user
 // *******************************
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
@@ -43,7 +43,7 @@ export const register = async (req, res) => {
 // *******************************
 // Login a user
 // *******************************
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const { token } = req.cookies;
@@ -70,7 +70,7 @@ export const login = async (req, res) => {
 // *******************************
 // Logout user
 // *******************************
-export const logout = async (req, res) => {
+export const logout = async (req, res, next) => {
   try {
     res
       .status(200)
@@ -84,7 +84,7 @@ export const logout = async (req, res) => {
 // *******************************
 // Get User's Own Profile
 // *******************************
-export const getMyProfile = async (req, res) => {
+export const getMyProfile = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.id);
 
@@ -97,7 +97,7 @@ export const getMyProfile = async (req, res) => {
 // *******************************
 // Get single user
 // *******************************
-export const getSingleUser = async (req, res) => {
+export const getSingleUser = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -114,9 +114,9 @@ export const getSingleUser = async (req, res) => {
 // *******************************
 // Update user
 // *******************************
-export const updateUser = async (req, res) => {};
+export const updateUser = async (req, res, next) => {};
 
 // *******************************
 // Delete user
 // *******************************
-export const deleteUser = async (req, res) => {};
+export const deleteUser = async (req, res, next) => {};
