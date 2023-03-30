@@ -1,3 +1,4 @@
+import ErrorHandler from "../middlewares/error.js";
 import { User } from "../model/user.js";
 import bcrypt from "bcrypt";
 import { sendToken } from "../utils/features.js";
