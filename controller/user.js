@@ -54,7 +54,7 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      return next(new ErrorHandler("User already exist with this email", 404));
+      return next(new ErrorHandler("User does not exist with this email", 404));
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -75,7 +75,12 @@ export const logout = async (req, res, next) => {
   try {
     res
       .status(200)
-      .clearCookie("token")
+      .cookie("token", "", {
+        httpOnly: true,
+        expires: new Date(Date.now()),
+        sameSite: process.env.NODE_ENV === "Development" ? "lax" : "none",
+        secure: process.env.NODE_ENV === "Development" ? false : true,
+      })
       .json({ success: true, message: "User logged out Successfully" });
   } catch (error) {
     next(error);
